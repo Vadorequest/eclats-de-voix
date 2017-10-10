@@ -6,6 +6,23 @@ This repository is about the setup of our Ghost blog using Docker. It is hosted 
 
 - Docker (https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu) *(Could be installed already if using OVH with a VPS including Docker)*
 
+## Straight-forward
+
+Assuming you've got Docker installed and nothing running on port `80`, the whole setup is only a few command lines to put the Ghost blog online:
+
+1. `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
+1. `docker run -e VIRTUAL_HOST=my-blog.fr,www.my-blog.fr -d --name blog -p 3002:2368 -v /var/www/blog:/var/lib/ghost/content ghost:1.12.1-alpine`
+
+You now have a Ghost instance running on your `localhost:3002` but also on both http://my-blog.fr and www.my-blog.fr (assuming you got a redirection there for both of them towards your VPS IP).
+
+Detailled explanations below. *I use `blog.eclats-de-voix` instead of `blog` for my own setup.*
+
+---
+
+# Testing/Dev
+
+If you wanna play around before deploying anything anywhere but on your localhost.
+
 ## Create and start the docker container
 
 `docker run -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
@@ -25,9 +42,11 @@ It is recommended to use a specific version of the image (1.12.1 here).
 
 `docker start blog.eclats-de-voix`
 
+---
+
 # Deploiement
 
-In order to deploy without efforts, we are using Nginx through Docker, using a proxy.
+In order to deploy (production) without efforts, we are using Nginx through Docker, using a proxy.
 
 We are using the awesome https://github.com/jwilder/nginx-proxy to do so. It basically listens to the port `80` and acts as a proxy to serve the right content depending on the url the request is coming from.
 
