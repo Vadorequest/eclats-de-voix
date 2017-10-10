@@ -4,7 +4,7 @@ This repository is about the setup of our Ghost blog using Docker. It is hosted 
 
 ## Pre-requisite
 
-- Docker (https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu)
+- Docker (https://docs.docker.com/engine/installation/linux/docker-ce/ubuntu) *(Could be installed already if using OVH with a VPS including Docker)*
 
 ## Create and start the docker container
 
