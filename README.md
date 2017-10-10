@@ -33,7 +33,7 @@ We are using the awesome https://github.com/jwilder/nginx-proxy to do so. It bas
 
 We need to load/run the proxy itself, running on port 80:
 
-`docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy`
+`docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
 
 Then, we can use any other container we wich to serve.
 `docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
