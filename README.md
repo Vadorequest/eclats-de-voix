@@ -12,7 +12,7 @@ This README is both a tutorial/explanation/reminder for myself and others who ar
 Assuming you've got Docker installed and nothing running on port `80`, the whole setup is only a few command lines to put the Ghost blog online:
 
 1. `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
-1. `docker run -e VIRTUAL_HOST=my-blog.fr,www.my-blog.fr -d --name blog -p 3002:2368 -v /var/www/blog:/var/lib/ghost/content ghost:1.12.1-alpine`
+1. `docker run -e VIRTUAL_HOST=my-blog.fr,www.my-blog.fr -e url=http://my-blog.fr/ -d --name blog -p 3002:2368 -v /var/www/blog:/var/lib/ghost/content ghost:1.12.1-alpine`
 
 You now have a Ghost instance running on your `localhost:3002` but also on both http://my-blog.fr and www.my-blog.fr (assuming you got a redirection there for both of them towards your VPS IP).
 
