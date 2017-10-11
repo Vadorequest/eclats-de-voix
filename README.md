@@ -91,16 +91,34 @@ Basically, you gotta setup a SSH key on your VPS, and store it to your Rsync.net
 ```
 $ crontab -e
 
-15 0 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 7 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 10 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 13 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 16 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 18 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
-0 21 * * * /usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
+15 0,7,10,13,16,18,21 * * * /root/rsyncnet_backup.sh
 ```
 
-This will do a backup at midnight, 7, 10am, then 1, 4, 6 and 9pm. It will send all files (recursively) from `/var/www/blog.eclats-de-voix` into a `blog.eclats-de-voix/` folder on the remote.
+Create the file `/root/rsyncnet_backup.sh` and make it executable `chmod +x /root/rsyncnet_backup.sh`.
+
+```bash 
+#!/bin/sh
+
+LOCKFILE=/root/.rsyncnet_lock
+
+if [ -e ${LOCKFILE} ] && kill -0 `cat ${LOCKFILE}`; then
+     echo "A backup is already running"
+     exit
+fi
+
+# make sure the lockfile is removed when we exit and then claim it
+trap "rm -f ${LOCKFILE}; exit" INT TERM EXIT
+echo $$ > ${LOCKFILE}
+
+/usr/bin/rsync -avH /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:
+
+rm -f ${LOCKFILE}
+```
+
+This will do a backup at midnight, 7, 10am, then 1, 4, 6 and 9pm. It will send all files (recursively) from `/var/www/blog.eclats-de-voix` into a `blog.eclats-de-voix/` folder on the remote. Additionally, a backup must be finished before another can start. (the script takes care of that)
+
+In addition, I **strongly recommend** to setup an "Idle warning" through the Rsync Dashboard at https://www.rsync.net/am/dashboard.html so you get notified if backups stop being done for any reason.
+
 
 ### Helpers
 
@@ -110,7 +128,7 @@ This will do a backup at midnight, 7, 10am, then 1, 4, 6 and 9pm. It will send a
 - **Downloading backup**: Run `rsync -chavzP --stats 12074@ch-s012.rsync.net: /var/www/blog.eclats-de-voix-backup/`, a new `/var/www/blog.eclats-de-voix-backup/` will contain a `blog.eclats-de-voix` folder containing the actual data.
 - **Listing all snapshots, per day**: Run `rsync --list-only 12074@ch-s012.rsync.net:.zfs/snapshot/` The .zfs folder is hidden and won't show otherwise.
 
-## Checking that the backup actually works
+## Checking if the backup actually works
 
 To do so, I simply run another container on another port and make it load the dowloaded backup.
 
