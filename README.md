@@ -56,9 +56,11 @@ We need to load/run the proxy itself, running on port 80:
 `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
 
 Then, we can use any other container we wich to serve.
-`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -e url=http://eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
 
 This serves our Ghost both on 3002 and on the defined `VIRTUAL_HOST`. See http://eclats-de-voix.fr/ and http://www.eclats-de-voix.fr/.
+
+Also, we define our `url` through an environment variable, which is necessary for many Ghost internal operations such as inviting team members, etc.
 
 **NOTE**: The `-e` option must be given first.
 
