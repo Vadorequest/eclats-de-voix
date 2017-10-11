@@ -26,7 +26,7 @@ If you wanna play around before deploying anything anywhere but on your localhos
 
 ## Create and start the docker container
 
-`docker run -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+`docker run -e url=http://eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
 
 This will create a container `blog.eclats-de-voix`, available through `localhost:3002`.
 A volume will also be available at `/var/www/blog.eclats-de-voix`, on the **host**. This is **very important** as it allows the data (DB, images, themes, ...) to live outside of the container life cycle. If the container is destroyed for any reason, your DB is safe.
