@@ -108,6 +108,7 @@ This will do a backup at midnight, 7, 10am, then 1, 4, 6 and 9pm. It will send a
 - **List Backup data**: Run `rsync --list-only 12074@ch-s012.rsync.net:blog.eclats-de-voix/`
 - **Delete all backups [DANGEROUS]**: Run `rsync -avH --delete /var/www/blog.eclats-de-voix 12074@ch-s012.rsync.net:` (good to know when playing around)
 - **Downloading backup**: Run `rsync -chavzP --stats 12074@ch-s012.rsync.net: /var/www/blog.eclats-de-voix-backup/`, a new `/var/www/blog.eclats-de-voix-backup/` will contain a `blog.eclats-de-voix` folder containing the actual data.
+- **Listing all snapshots, per day**: Run `rsync --list-only 12074@ch-s012.rsync.net:.zfs/snapshot/` The .zfs folder is hidden and won't show otherwise.
 
 ## Checking that the backup actually works
 
