@@ -12,7 +12,7 @@ This README is both a tutorial/explanation/reminder for myself and others who ar
 Assuming you've got Docker installed and nothing running on port `80`, the whole setup is only a few command lines to put the Ghost blog online:
 
 1. `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
-1. `docker run -e VIRTUAL_HOST=my-blog.fr,www.my-blog.fr -e url=http://my-blog.fr/ -d --name blog -p 3002:2368 -v /var/www/blog:/var/lib/ghost/content ghost:1.12.1-alpine`
+1. `docker run -e VIRTUAL_HOST=my-blog.fr,www.my-blog.fr -e url=http://my-blog.fr/ -d --name blog -p 3002:2368 -v /var/www/blog:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 You now have a Ghost instance running on your `localhost:3002` but also on both http://my-blog.fr and www.my-blog.fr (assuming you got a redirection there for both of them towards your VPS IP).
 
@@ -26,16 +26,16 @@ If you wanna play around before deploying anything anywhere but on your localhos
 
 ## Create and start the docker container
 
-`docker run -e url=http://eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+`docker run -e url=http://eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3002:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 This will create a container `blog.eclats-de-voix`, available through `localhost:3002`.
 A volume will also be available at `/var/www/blog.eclats-de-voix`, on the **host**. This is **very important** as it allows the data (DB, images, themes, ...) to live outside of the container life cycle. If the container is destroyed for any reason, your DB is safe.
 
 Note that if the host itself is destroyed, the data are **lost**.
 
-This container will be based on the official `ghost:1.12.1-alpine` version. See https://hub.docker.com/_/ghost/
+This container will be based on the official `ghost:1.13.0-alpine` version. See https://hub.docker.com/_/ghost/
 
-It is recommended to use a specific version of the image (1.12.1 here).
+It is recommended to use a specific version of the image (1.13.0 here).
 
 ## Stop/Start the container
 
@@ -56,7 +56,8 @@ We need to load/run the proxy itself, running on port 80:
 `docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock:ro jwilder/nginx-proxy:alpine`
 
 Then, we can use any other container we wich to serve.
-`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -e url=http://eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+
+`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr,blog.eclats-de-voix.fr,www.blog.eclats-de-voix.fr -e url=http://blog.eclats-de-voix.fr/ -d --name blog.eclats-de-voix3 -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 This serves our Ghost both on 3002 and on the defined `VIRTUAL_HOST`. See http://eclats-de-voix.fr/ and http://www.eclats-de-voix.fr/.
 
@@ -66,7 +67,7 @@ Also, we define our `url` through an environment variable, which is necessary fo
 
 ## Start a new container based on existing data
 
-`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 The volume at `/var/www/blog.eclats-de-voix` will be used to setup this new container and therefore you won't have any difference between the first and second container.
 
@@ -88,13 +89,15 @@ You could have your own server, and do the setup to handle Rsync requests throug
 
 Honnestly, Rsync website is a bit ugly, and the docs are worse (css is has-been :/). Once you pay, you gotta wait for 4-8h before you get the email giving you the credentials for the server. There is a lot of explanation and links towards the doc in the email though. Helpful.
 
-Basically, you gotta setup a SSH key on your VPS, and store it to your Rsync.net account through cli. Then, you have to setup a cron job:
+Basically, you gotta setup a SSH key on your VPS `ssh-keygen -t rsa`, and store it to your Rsync.net account through cli. Then, you have to setup a cron job:
 
 ```
 $ crontab -e
 
 15 0,7,10,13,16,18,21 * * * /root/rsyncnet_backup.sh
 ```
+
+This basically make a backup at 00:15, 7am, 10am, 1pm, 4pm, 6pm, 9pm. You can change those numbers as you like, remove some, add more, etc.
 
 Create the file `/root/rsyncnet_backup.sh` and make it executable `chmod +x /root/rsyncnet_backup.sh`.
 
@@ -134,7 +137,7 @@ In addition, I **strongly recommend** to setup an "Idle warning" through the Rsy
 
 To do so, I simply run another container on another port and make it load the dowloaded backup.
 
-`docker run -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix-backup/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.12.1-alpine`
+`docker run -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix-backup/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 Then, go to http://localhost:3003 and check if it worked. :)
 
