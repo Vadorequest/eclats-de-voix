@@ -59,7 +59,7 @@ Then, we can use any other container we wich to serve.
 
 `docker run -e VIRTUAL_HOST=blog.eclats-de-voix.fr,www.blog.eclats-de-voix.fr,eclats-de-voix.fr,www.eclats-de-voix.fr -e url=http://blog.eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3000:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
-This serves our Ghost both on 3002 and on the defined `VIRTUAL_HOST`. See http://eclats-de-voix.fr/ and http://www.eclats-de-voix.fr/.
+This serves our Ghost both on 3000 and on the defined `VIRTUAL_HOST`. See http://eclats-de-voix.fr/ and http://www.eclats-de-voix.fr/.
 
 Also, we define our `url` through an environment variable, which is necessary for many Ghost internal operations such as inviting team members, etc.
 
