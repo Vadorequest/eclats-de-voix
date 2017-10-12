@@ -57,7 +57,7 @@ We need to load/run the proxy itself, running on port 80:
 
 Then, we can use any other container we wich to serve.
 
-`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr,blog.eclats-de-voix.fr,www.blog.eclats-de-voix.fr -e url=http://blog.eclats-de-voix.fr/ -d --name blog.eclats-de-voix3 -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
+`docker run -e VIRTUAL_HOST=blog.eclats-de-voix.fr,www.blog.eclats-de-voix.fr,eclats-de-voix.fr,www.eclats-de-voix.fr -e url=http://blog.eclats-de-voix.fr/ -d --name blog.eclats-de-voix -p 3000:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 This serves our Ghost both on 3002 and on the defined `VIRTUAL_HOST`. See http://eclats-de-voix.fr/ and http://www.eclats-de-voix.fr/.
 
@@ -67,7 +67,7 @@ Also, we define our `url` through an environment variable, which is necessary fo
 
 ## Start a new container based on existing data
 
-`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
+`docker run -e VIRTUAL_HOST=eclats-de-voix.fr,www.eclats-de-voix.fr -d --name blog.eclats-de-voix-2 -p 3000:2368 -v /var/www/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
 The volume at `/var/www/blog.eclats-de-voix` will be used to setup this new container and therefore you won't have any difference between the first and second container.
 
@@ -137,8 +137,8 @@ In addition, I **strongly recommend** to setup an "Idle warning" through the Rsy
 
 To do so, I simply run another container on another port and make it load the dowloaded backup.
 
-`docker run -d --name blog.eclats-de-voix-2 -p 3003:2368 -v /var/www/blog.eclats-de-voix-backup/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
+`docker run -d --name blog.eclats-de-voix-2 -p 3000:2368 -v /var/www/blog.eclats-de-voix-backup/blog.eclats-de-voix:/var/lib/ghost/content ghost:1.13.0-alpine`
 
-Then, go to http://localhost:3003 and check if it worked. :)
+Then, go to http://localhost:3000 and check if it worked. :)
 
 
